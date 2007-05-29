@@ -1,0 +1,14 @@
+development:
+  server: localhost
+  username: username
+  password: password
+  
+test:
+  server: localhost
+  username: username
+  password: password
+  
+production:
+  server: localhost
+  username: username
+  password: password
