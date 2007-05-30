@@ -16,14 +16,16 @@ module Fetcher
       @connection.start(@username, @password)
     end
 
-    def get_message
+    def get_messages
       unless @connection.mails.empty?
         @connection.each_mail do |msg|
+          # Process the message
           begin
             @receiver.receive(msg.pop)
           rescue
             # Store the message for inspection if the receiver errors
           end
+          # Delete message from server
           msg.delete
         end
       end

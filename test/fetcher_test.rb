@@ -1,4 +1,5 @@
-require File.dirname(__FILE__) + '/../../../../config/boot'
+# require File.dirname(__FILE__) + '/../../../../config/boot'
+require 'rubygems'
 require 'test/unit'
 require 'mocha'
 require 'fetcher'
@@ -20,7 +21,7 @@ class FetcherTest < Test::Unit::TestCase
     assert_equal @receiver, @fetcher.instance_variable_get(:@receiver)
   end
   
-  def test_should_fetch_message
-    assert @fetcher.fetch
+  def test_should_require_subclass
+    assert_raise(NotImplementedError) { @fetcher.fetch }
   end
 end

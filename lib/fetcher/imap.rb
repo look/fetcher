@@ -4,7 +4,7 @@ module Fetcher
   class Imap < Base
     
     def initialize(options={})
-      @authentication = options.delete(:authentication)
+      @authentication = options.delete(:authentication) || 'PLAIN'
       super(options)
     end
 
@@ -12,10 +12,10 @@ module Fetcher
 
     def establish_connection
       @connection = Net::IMAP.new(@server)
-      @connection.authenticate((@authentication || 'PLAIN'), @username, @password)
+      @connection.authenticate(@authentication, @username, @password)
     end
 
-    def get_message
+    def get_messages
       @connection.select('INBOX')
       @connection.search(['ALL']).each do |message_id|
         msg = @connection.fetch(message_id,'RFC822')[0].attr['RFC822']
