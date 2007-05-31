@@ -9,13 +9,13 @@ module Fetcher
       @ssl = options.delete(:ssl)
       super
     end
-
+    
     def establish_connection
       @connection = Net::POP3.new(@server)
       @connection.enable_ssl(OpenSSL::SSL::VERIFY_NONE) if @ssl
       @connection.start(@username, @password)
     end
-
+    
     def get_messages
       unless @connection.mails.empty?
         @connection.each_mail do |msg|
@@ -24,16 +24,21 @@ module Fetcher
             @receiver.receive(msg.pop)
           rescue
             # Store the message for inspection if the receiver errors
+            handle_bogus_message(msg.pop)
           end
           # Delete message from server
           msg.delete
         end
       end
     end
-
+    
+    def handle_bogus_message(message)
+      
+    end
+    
     def close_connection
       @connection.finish
     end
-
+    
   end
 end

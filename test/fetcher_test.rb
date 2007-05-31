@@ -25,3 +25,5 @@ class FetcherTest < Test::Unit::TestCase
     assert_raise(NotImplementedError) { @fetcher.fetch }
   end
 end
+
+# Write tests for sub-classes

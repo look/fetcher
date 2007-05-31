@@ -2,19 +2,19 @@ require File.dirname(__FILE__) + '/../vendor/plain_imap'
 
 module Fetcher
   class Imap < Base
-
+    
     protected
     
     def assign_options(options={})
       @authentication = options.delete(:authentication) || 'PLAIN'
       super
     end
-
+    
     def establish_connection
       @connection = Net::IMAP.new(@server)
       @connection.authenticate(@authentication, @username, @password)
     end
-
+    
     def get_messages
       @connection.select('INBOX')
       @connection.search(['ALL']).each do |message_id|
@@ -24,19 +24,23 @@ module Fetcher
           @receiver.receive(msg)
         rescue
           # Store the message for inspection if the receiver errors
-          @connection.append('bogus', msg)
+          handle_bogus_message(msg)
         end
         # Mark message as deleted 
         @connection.store(message_id, "+FLAGS", [:Deleted])
       end
     end
-
+    
+    def handle_bogus_message(message)
+      @connection.append('bogus', message)
+    end
+    
     def close_connection
       # expunge messages and log out.
       @connection.expunge
       @connection.logout
       @connection.disconnect
     end
-
+    
   end
 end
