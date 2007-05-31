@@ -2,13 +2,13 @@ require File.dirname(__FILE__) + '/../vendor/secure_pop'
 
 module Fetcher
   class Pop < Base
-    
-    def initialize(options={})
-      @ssl = options.delete(:ssl)
-      super(options)
-    end
 
     protected
+    
+    def assign_options(options={})
+      @ssl = options.delete(:ssl)
+      super
+    end
 
     def establish_connection
       @connection = Net::POP3.new(@server)

@@ -2,9 +2,14 @@ module Fetcher
   class Base
 
     def initialize(options={})
-      %w(server username password receiver).each do |opt|
-        instance_eval("@#{opt} = options[:#{opt}]")
+      klass = options.delete(:type)
+      
+      if klass
+        module_eval "#{klass.to_s.capitalize}.new(#{options})"
+      else
+        assign_options(options)
       end
+      
     end
 
     def fetch
@@ -14,6 +19,12 @@ module Fetcher
     end
 
     protected
+    
+    def assign_options(options={})
+      %w(server username password receiver).each do |opt|
+        instance_eval("@#{opt} = options[:#{opt}]")
+      end
+    end
 
     def establish_connection
       raise NotImplementedError, "This method should be overridden by subclass"

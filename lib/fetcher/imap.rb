@@ -2,13 +2,13 @@ require File.dirname(__FILE__) + '/../vendor/plain_imap'
 
 module Fetcher
   class Imap < Base
-    
-    def initialize(options={})
-      @authentication = options.delete(:authentication) || 'PLAIN'
-      super(options)
-    end
 
     protected
+    
+    def assign_options(options={})
+      @authentication = options.delete(:authentication) || 'PLAIN'
+      super
+    end
 
     def establish_connection
       @connection = Net::IMAP.new(@server)
