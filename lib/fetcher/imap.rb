@@ -5,25 +5,26 @@ module Fetcher
     
     protected
     
-    def assign_options(options={})
+    # Adds authentication option
+    def initialize(options={})
       @authentication = options.delete(:authentication) || 'PLAIN'
-      super
+      super(options)
     end
     
+    # Open connection and login to server
     def establish_connection
       @connection = Net::IMAP.new(@server)
       @connection.authenticate(@authentication, @username, @password)
     end
     
+    # Retrieve messages from server
     def get_messages
       @connection.select('INBOX')
       @connection.search(['ALL']).each do |message_id|
         msg = @connection.fetch(message_id,'RFC822')[0].attr['RFC822']
-        # process the email message
         begin
-          @receiver.receive(msg)
+          process_message(msg)
         rescue
-          # Store the message for inspection if the receiver errors
           handle_bogus_message(msg)
         end
         # Mark message as deleted 
@@ -31,12 +32,13 @@ module Fetcher
       end
     end
     
+    # Store the message for inspection if the receiver errors
     def handle_bogus_message(message)
       @connection.append('bogus', message)
     end
     
+    # Delete messages and log out
     def close_connection
-      # expunge messages and log out.
       @connection.expunge
       @connection.logout
       @connection.disconnect

@@ -21,5 +21,9 @@ class <%=class_name%>FetcherDaemon < Daemon::Base
     end
   end
   
+  def self.stop
+    puts "Stopping <%=class_name%>Fetcher"
+  end
+  
 end
 

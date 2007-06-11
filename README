@@ -1,4 +1,17 @@
-Fetcher
-=======
+= Fetcher
 
 Simplified message fetching
+
+Install using:
+script/plugin install svn://rubyforge.org/var/svn/slantwise/fetcher/trunk
+
+== Usage
+
+  @fetcher = Fetcher.new(:pop, :server => 'mail.example.com',
+                               :username => 'user',
+                               :password => 'pass',
+                               :reciever => IncomingMailHandler)
+  loop do
+    @fetcher.fetch
+    sleep 60
+  end
