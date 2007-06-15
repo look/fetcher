@@ -49,12 +49,12 @@ class FactoryFetcherTest < Test::Unit::TestCase
   
   def setup
     @receiver = mock()
-    @pop_fetcher = Fetcher.new(:pop, :server => 'test.host',
+    @pop_fetcher = Fetcher.create(:type => :pop, :server => 'test.host',
                                :username => 'name',
                                :password => 'password',
                                :receiver => @receiver)
     
-  @imap_fetcher = Fetcher.new(:imap, :server => 'test.host',
+  @imap_fetcher = Fetcher.create(:type => :imap, :server => 'test.host',
                               :username => 'name',
                               :password => 'password',
                               :receiver => @receiver)
@@ -63,6 +63,10 @@ class FactoryFetcherTest < Test::Unit::TestCase
   def test_should_be_sublcass
     assert_equal Fetcher::Pop, @pop_fetcher.class
     assert_equal Fetcher::Imap, @imap_fetcher.class
+  end
+  
+  def test_should_require_type
+    assert_raise(ArgumentError) { Fetcher.create({}) }
   end
   
 end

@@ -1,6 +1,19 @@
 module Fetcher
   class Base
-    
+    # Options:
+    # * <tt>:server</tt> - Server to connect to.
+    # * <tt>:username</tt> - Username to use when connecting to server.
+    # * <tt>:password</tt> - Password to use when connecting to server.
+    # * <tt>:receiver</tt> - Receiver object to pass messages to. Assumes the
+    # receiver object has a receive method that takes a message as it's argument
+    #
+    # Additional protocol-specific options implimented by sub-classes
+    #
+    # Example: 
+    #   Fetcher::Base.new(:server => 'mail.example.com',
+    #                     :username => 'pam',
+    #                     :password => 'test',
+    #                     :receiver => IncomingMailHandler)
     def initialize(options={})
       %w(server username password receiver).each do |opt|
         raise ArgumentError, "#{opt} is required" unless options[opt.to_sym]

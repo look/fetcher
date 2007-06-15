@@ -5,7 +5,8 @@ module Fetcher
     
     protected
     
-    # Adds authentication option
+    # Additional Options:
+    # * <tt>:authentication</tt> - authentication type to use, defaults to PLAIN
     def initialize(options={})
       @authentication = options.delete(:authentication) || 'PLAIN'
       super(options)

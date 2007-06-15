@@ -5,7 +5,8 @@ module Fetcher
 
     protected
     
-    # Adds ssl option
+    # Additional Options:
+    # * <tt>:ssl</tt> - whether or not to use ssl encryption
     def initialize(options={})
       @ssl = options.delete(:ssl)
       super(options)

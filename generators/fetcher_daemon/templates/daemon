@@ -12,8 +12,8 @@ class <%=class_name%>FetcherDaemon < Daemon::Base
   @sleep_time = @config.delete(:sleep_time)
   def self.start
     puts "Starting <%=class_name%>Fetcher"
-    # Add your own receiver object below and specify fetcher subclass
-    @fetcher = Fetcher::Base.new({:receiver => nil, :type => nil}.merge(@config))
+    # Add your own receiver object below
+    @fetcher = Fetcher.create({:receiver => nil}.merge(@config))
 
     loop do
       @fetcher.fetch
