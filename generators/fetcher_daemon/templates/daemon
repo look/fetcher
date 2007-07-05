@@ -1,17 +1,14 @@
 #!/usr/bin/env ruby
-require File.dirname(__FILE__) + '/../config/boot'
-require 'daemon'
-require 'yaml'
-require 'fetcher'
+require File.dirname(__FILE__) + '/../config/environment.rb'
 
 class <%=class_name%>FetcherDaemon < Daemon::Base
   
-  @config = YAML.load_file("#{RAILS_ROOT}/config/<%=file_name%>_fetcher.yml")
+  @config = YAML.load_file("#{RAILS_ROOT}/config/<%=file_name%>.yml")
   @config = @config[RAILS_ENV].to_options
   
-  @sleep_time = @config.delete(:sleep_time)
+  @sleep_time = @config.delete(:sleep_time) || 60
   def self.start
-    puts "Starting <%=class_name%>Fetcher"
+    puts "Starting <%=class_name%>FetcherDaemon"
     # Add your own receiver object below
     @fetcher = Fetcher.create({:receiver => nil}.merge(@config))
 
@@ -22,8 +19,9 @@ class <%=class_name%>FetcherDaemon < Daemon::Base
   end
   
   def self.stop
-    puts "Stopping <%=class_name%>Fetcher"
+    puts "Stopping <%=class_name%>FetcherDaemon"
   end
   
 end
 
+<%=class_name%>FetcherDaemon.daemonize
