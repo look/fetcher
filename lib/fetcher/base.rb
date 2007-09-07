@@ -17,6 +17,11 @@ module Fetcher
     def initialize(options={})
       %w(server username password receiver).each do |opt|
         raise ArgumentError, "#{opt} is required" unless options[opt.to_sym]
+        # convert receiver to a Class if it isn't already.
+        if opt == "receiver" && options[:receiver].is_a?(String)
+          options[:receiver] = Kernel.const_get(options[:receiver])
+        end
+          
         instance_eval("@#{opt} = options[:#{opt}]")
       end
     end
