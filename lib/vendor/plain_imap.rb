@@ -1,3 +1,4 @@
+require 'net/imap'
 # add plain as an authentication type...
 # This is taken from:
 # http://svn.ruby-lang.org/cgi-bin/viewvc.cgi/trunk/lib/net/imap.rb?revision=7657&view=markup&pathrev=10966
@@ -16,3 +17,5 @@ class PlainAuthenticator
     @password = password
   end
 end
+
+Net::IMAP.add_authenticator "PLAIN", PlainAuthenticator
