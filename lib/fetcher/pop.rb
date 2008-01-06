@@ -7,14 +7,16 @@ module Fetcher
     
     # Additional Options:
     # * <tt>:ssl</tt> - whether or not to use ssl encryption
+    # * <tt>:port</tt> - port to use (defaults to 110)
     def initialize(options={})
       @ssl = options.delete(:ssl)
+      @port = options.delete(:port) || Net::POP3.default_port
       super(options)
     end
     
     # Open connection and login to server
     def establish_connection
-      @connection = Net::POP3.new(@server)
+      @connection = Net::POP3.new(@server, @port)
       @connection.enable_ssl(OpenSSL::SSL::VERIFY_NONE) if @ssl
       @connection.start(@username, @password)
     end

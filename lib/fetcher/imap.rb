@@ -3,18 +3,22 @@ require File.dirname(__FILE__) + '/../vendor/plain_imap'
 module Fetcher
   class Imap < Base
     
+    PORT = 143
+    
     protected
     
     # Additional Options:
     # * <tt>:authentication</tt> - authentication type to use, defaults to PLAIN
+    # * <tt>:port</tt> - port to use (defaults to 143)
     def initialize(options={})
       @authentication = options.delete(:authentication) || 'PLAIN'
+      @port = options.delete(:port) || PORT
       super(options)
     end
     
     # Open connection and login to server
     def establish_connection
-      @connection = Net::IMAP.new(@server)
+      @connection = Net::IMAP.new(@server, @port)
       @connection.authenticate(@authentication, @username, @password)
     end
     
