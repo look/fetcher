@@ -10,16 +10,24 @@ module Fetcher
     # Additional Options:
     # * <tt>:authentication</tt> - authentication type to use, defaults to PLAIN
     # * <tt>:port</tt> - port to use (defaults to 143)
+    # * <tt>:ssl</tt> - use SSL to connect
+    # * <tt>:use_login</tt> - use LOGIN instead of AUTHENTICATE to connect (some IMAP servers, like GMail, do not support AUTHENTICATE)
     def initialize(options={})
       @authentication = options.delete(:authentication) || 'PLAIN'
       @port = options.delete(:port) || PORT
+      @ssl = options.delete(:ssl)
+      @use_login = options.delete(:use_login)
       super(options)
     end
     
     # Open connection and login to server
     def establish_connection
-      @connection = Net::IMAP.new(@server, @port)
-      @connection.authenticate(@authentication, @username, @password)
+      @connection = Net::IMAP.new(@server, @port, @ssl)
+      if @use_login
+        @connection.login(@username, @password)
+      else
+        @connection.authenticate(@authentication, @username, @password)
+      end
     end
     
     # Retrieve messages from server
