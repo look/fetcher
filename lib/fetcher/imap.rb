@@ -12,11 +12,15 @@ module Fetcher
     # * <tt>:port</tt> - port to use (defaults to 143)
     # * <tt>:ssl</tt> - use SSL to connect
     # * <tt>:use_login</tt> - use LOGIN instead of AUTHENTICATE to connect (some IMAP servers, like GMail, do not support AUTHENTICATE)
+    # * <tt>:processed_folder</tt> - if set to the name of a mailbox, messages will be moved to that mailbox instead of deleted after processing. The mailbox will be created if it does not exist.
+    # * <tt>:error_folder:</tt> - the name of a mailbox where messages that cannot be processed (i.e., your receiver throws an exception) will be moved. Defaults to "bogus". The mailbox will be created if it does not exist.
     def initialize(options={})
       @authentication = options.delete(:authentication) || 'PLAIN'
       @port = options.delete(:port) || PORT
       @ssl = options.delete(:ssl)
       @use_login = options.delete(:use_login)
+      @processed_folder = options.delete(:processed_folder)
+      @error_folder = options.delete(:error_folder) || 'bogus'
       super(options)
     end
     
@@ -33,21 +37,23 @@ module Fetcher
     # Retrieve messages from server
     def get_messages
       @connection.select('INBOX')
-      @connection.search(['ALL']).each do |message_id|
-        msg = @connection.fetch(message_id,'RFC822')[0].attr['RFC822']
+      @connection.uid_search(['ALL']).each do |uid|
+        msg = @connection.uid_fetch(uid,'RFC822').first.attr['RFC822']
         begin
           process_message(msg)
+          add_to_processed_folder(uid) if @processed_folder
         rescue
           handle_bogus_message(msg)
         end
         # Mark message as deleted 
-        @connection.store(message_id, "+FLAGS", [:Deleted])
+        @connection.uid_store(uid, "+FLAGS", [:Seen, :Deleted])
       end
     end
     
     # Store the message for inspection if the receiver errors
     def handle_bogus_message(message)
-      @connection.append('bogus', message)
+      create_mailbox(@error_folder)
+      @connection.append(@error_folder, message)
     end
     
     # Delete messages and log out
@@ -55,6 +61,17 @@ module Fetcher
       @connection.expunge
       @connection.logout
       @connection.disconnect
+    end
+    
+    def add_to_processed_folder(uid)
+      create_mailbox(@processed_folder)
+      @connection.uid_copy(uid, @processed_folder)
+    end
+    
+    def create_mailbox(mailbox)
+      unless @connection.list("", mailbox)
+        @connection.create(mailbox)
+      end
     end
     
   end
