@@ -57,7 +57,7 @@ You should monitor the daemon using monit or god to ensure it does not crash.
 == Running via cron
 
 You can also run the Fetcher periodically via cron. It is important to ensure that only one 
-instance is running at one time, and for that the <a href="http://codeforpeople.com/lib/ruby/lockfile/">Lockfile gem</a> is recommended.
+instance is running at one time, and for that the {Lockfile gem}[http://codeforpeople.com/lib/ruby/lockfile/] is recommended.
 
 Here is an example script to be with <tt>script/runner</tt> via cron:
 
@@ -81,11 +81,12 @@ You can subclass <tt>Fetcher::Base</tt> or one of the protocol-specific classed 
 
 <shameless-plug>
 
-You can read more about how to use the Fetcher in the PeepCode book
-<a href="https://peepcode.com/products/mms2r-pdf">Receiving Email with Ruby</a>.
+You can read more about how to use the Fetcher in the PeepCode book {Receiving Email with Ruby}[https://peepcode.com/products/mms2r-pdf].
 
 </shameless-plug>
 
 == Credit & Copyright
 
-Created by Dan Weinand and Luke Francl. Development supported by <a href="http://slantwisedesign.com">Slantwise Design</a>.
+Created by Dan Weinand and Luke Francl. Development supported by {Slantwise Design}[http://slantwisedesign.com].
+
+Licensed under the terms of the MIT License. Be excellent to each other.
