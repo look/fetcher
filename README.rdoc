@@ -43,6 +43,7 @@ The following options can be passed to the <tt>Fetcher.create</tt> factory metho
 [<tt>authentication</tt>] The authentication scheme to use (IMAP only). Supports LOGIN, CRAM-MD5, and PASSWORD (defaults to PLAIN) 
 [<tt>use_login</tt>] Set to any value to use the LOGIN command instead of AUTHENTICATE. Some servers, like GMail, do not support AUTHENTICATE (IMAP only).
 [<tt>sleep_time</tt>] The number of seconds to sleep between fetches (defaults to 60 seconds; valid only for the generated daemon) 
+[<tt>in_folder</tt>] The name of the folder from which to read incoming mail (IMAP only). Defaults to +INBOX+.
 [<tt>processed_folder</tt>] The name of a folder to move mail to after it has been processed (IMAP only). <b>NOTE:</b> If not specified, mail is deleted. 
 [<tt>error_folder</tt>] The name a folder to move mail that causes an error during processing (IMAP only). Defaults to +bogus+.
 

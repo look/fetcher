@@ -20,6 +20,7 @@ module Fetcher
       @port = options.delete(:port) || PORT
       @ssl = options.delete(:ssl)
       @use_login = options.delete(:use_login)
+      @in_folder = options.delete(:in_folder) || 'INBOX'
       @processed_folder = options.delete(:processed_folder)
       @error_folder = options.delete(:error_folder) || 'bogus'
       super(options)
@@ -42,7 +43,7 @@ module Fetcher
     
     # Retrieve messages from server
     def get_messages
-      @connection.select('INBOX')
+      @connection.select(@in_folder)
       @connection.uid_search(['ALL']).each do |uid|
         msg = @connection.uid_fetch(uid,'RFC822').first.attr['RFC822']
         begin
