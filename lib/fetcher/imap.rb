@@ -1,3 +1,4 @@
+require 'system_timer'
 require File.dirname(__FILE__) + '/../vendor/plain_imap'
 
 module Fetcher
@@ -26,11 +27,16 @@ module Fetcher
     
     # Open connection and login to server
     def establish_connection
-      @connection = Net::IMAP.new(@server, @port, @ssl)
-      if @use_login
-        @connection.login(@username, @password)
-      else
-        @connection.authenticate(@authentication, @username, @password)
+      # Work around a freezing bug in Ruby's IMAP implementation using the SystemTimer library. 
+      # It will have a SIGALRM sent to the process if this block doesn't exit in 15 seconds.
+      # Ruby's timeout's are unreliable if a system call is invoked.
+      SystemTimer.timeout_after(15.seconds) do 
+        @connection = Net::IMAP.new(@server, @port, @ssl)
+        if @use_login
+          @connection.login(@username, @password)
+        else
+          @connection.authenticate(@authentication, @username, @password)
+        end
       end
     end
     
