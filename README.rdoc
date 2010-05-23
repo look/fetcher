@@ -13,6 +13,11 @@ Install using:
 
   script/plugin install git://github.com/look/fetcher.git
 
+== Dependencies
+
+This plugin depends on the SystemTimer gem. Do not forget to add it to your Gemfile. After adding,
+remember to do a "bundle install"
+
 == Usage
 
 Create a new fetcher object like the following:
@@ -88,5 +93,7 @@ You can read more about how to use the Fetcher in the PeepCode book {Receiving E
 == Credit & Copyright
 
 Created by Dan Weinand and Luke Francl. Development supported by {Slantwise Design}[http://slantwisedesign.com].
+
+Generators for Rails 3 compatibility added by Amol Hatwár, Exceed Consulting.
 
 Licensed under the terms of the MIT License. Be excellent to each other.

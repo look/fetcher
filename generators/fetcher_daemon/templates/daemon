@@ -3,8 +3,8 @@ require File.dirname(__FILE__) + '/../config/environment.rb'
 
 class <%=class_name%>FetcherDaemon < Daemon::Base
   
-  @config = YAML.load_file("#{RAILS_ROOT}/config/<%=file_name%>.yml")
-  @config = @config[RAILS_ENV].to_options
+  @config = YAML.load_file("#{Rails.root}/config/<%=file_name%>.yml")
+  @config = @config[Rails.env].to_options
   
   @sleep_time = @config.delete(:sleep_time) || 60
   def self.start
