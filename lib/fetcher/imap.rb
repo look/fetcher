@@ -66,9 +66,13 @@ module Fetcher
     def close_connection
       @connection.expunge
       @connection.logout
-      @connection.disconnect
+      begin
+        @connection.disconnect unless @connection.disconnected?
+      rescue
+        Rails.logger.info("Fetcher: Remote closed connection before I could disconnect.")
+      end
     end
-    
+        
     def add_to_processed_folder(uid)
       create_mailbox(@processed_folder)
       @connection.uid_copy(uid, @processed_folder)
