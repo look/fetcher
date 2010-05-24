@@ -15,8 +15,9 @@ Install using:
 
 == Dependencies
 
-This plugin depends on the SystemTimer gem. Do not forget to add it to your Gemfile. After adding,
-remember to do a "bundle install"
+If you are using a 1.8 series Ruby, this plugin depends on the SystemTimer gem to work reliably.
+Do not forget to add it to your Gemfile or environment.rb. As Ruby 1.9 onwards use native threads
+SystemTimer gem becomes redundant, and timeout.rb is used instead.
 
 == Usage
 

@@ -27,33 +27,16 @@ module Fetcher
     
     # Open connection and login to server
     def establish_connection
-      meth18 = <<-eos
-        # Work around a freezing bug in Ruby's IMAP implementation using the SystemTimer library. 
-        # It will have a SIGALRM sent to the process if this block doesn't exit in 15 seconds.
-        # Ruby 1.8 timeouts are unreliable if a system call is invoked.
-        SystemTimer.timeout_after(15.seconds) do 
-          @connection = Net::IMAP.new(@server, @port, @ssl)
-          if @use_login
-            @connection.login(@username, @password)
-          else
-            @connection.authenticate(@authentication, @username, @password)
-          end
-        end
-      eos
+      timeout_call = (RUBY_VERSION < '1.9.0') ? "SystemTimer.timeout_after(15.seconds) do" : "Timeout::timeout(15) do"
       
-      meth19 = <<-eos
-        # Use the normal native threading goodness that Ruby 1.9 onwards provide for timeouts.
-        Timeout::timeout(15) do 
-          @connection = Net::IMAP.new(@server, @port, @ssl)
-          if @use_login
-            @connection.login(@username, @password)
-          else
-            @connection.authenticate(@authentication, @username, @password)
-          end
-        end
-      eos
-      
-      (RUBY_VERSION < '1.9.0') ? eval(meth18) : eval(meth19)
+      eval("#{timeout_call}
+              @connection = Net::IMAP.new(@server, @port, @ssl)
+              if @use_login
+                @connection.login(@username, @password)
+              else
+                @connection.authenticate(@authentication, @username, @password)
+              end
+            end")
     end
     
     # Retrieve messages from server
