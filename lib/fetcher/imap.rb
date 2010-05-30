@@ -1,4 +1,4 @@
-require 'system_timer'
+(RUBY_VERSION < '1.9.0') ? require('system_timer') : require('timeout')
 require File.dirname(__FILE__) + '/../vendor/plain_imap'
 
 module Fetcher
@@ -28,17 +28,16 @@ module Fetcher
     
     # Open connection and login to server
     def establish_connection
-      # Work around a freezing bug in Ruby's IMAP implementation using the SystemTimer library. 
-      # It will have a SIGALRM sent to the process if this block doesn't exit in 15 seconds.
-      # Ruby's timeout's are unreliable if a system call is invoked.
-      SystemTimer.timeout_after(15.seconds) do 
-        @connection = Net::IMAP.new(@server, @port, @ssl)
-        if @use_login
-          @connection.login(@username, @password)
-        else
-          @connection.authenticate(@authentication, @username, @password)
-        end
-      end
+      timeout_call = (RUBY_VERSION < '1.9.0') ? "SystemTimer.timeout_after(15.seconds) do" : "Timeout::timeout(15) do"
+      
+      eval("#{timeout_call}
+              @connection = Net::IMAP.new(@server, @port, @ssl)
+              if @use_login
+                @connection.login(@username, @password)
+              else
+                @connection.authenticate(@authentication, @username, @password)
+              end
+            end")
     end
     
     # Retrieve messages from server
@@ -67,9 +66,13 @@ module Fetcher
     def close_connection
       @connection.expunge
       @connection.logout
-      @connection.disconnect
+      begin
+        @connection.disconnect unless @connection.disconnected?
+      rescue
+        Rails.logger.info("Fetcher: Remote closed connection before I could disconnect.")
+      end
     end
-    
+        
     def add_to_processed_folder(uid)
       create_mailbox(@processed_folder)
       @connection.uid_copy(uid, @processed_folder)
