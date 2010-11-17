@@ -5,6 +5,7 @@ module Fetcher
     # * <tt>:username</tt> - Username to use when connecting to server.
     # * <tt>:password</tt> - Password to use when connecting to server.
     # * <tt>:receiver</tt> - Receiver object to pass messages to. Assumes the
+    # * <tt>:keep</tt> - Do not remove messages from server
     # receiver object has a receive method that takes a message as it's argument
     #
     # Additional protocol-specific options implimented by sub-classes

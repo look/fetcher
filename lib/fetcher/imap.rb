@@ -52,7 +52,7 @@ module Fetcher
           handle_bogus_message(msg)
         end
         # Mark message as deleted 
-        @connection.uid_store(uid, "+FLAGS", [:Seen, :Deleted])
+        @connection.uid_store(uid, "+FLAGS", [:Seen, :Deleted]) unless @keep
       end
     end
     
@@ -64,7 +64,7 @@ module Fetcher
     
     # Delete messages and log out
     def close_connection
-      @connection.expunge
+      @connection.expunge unless @keep
       @connection.logout
       begin
         @connection.disconnect unless @connection.disconnected?
