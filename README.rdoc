@@ -35,6 +35,12 @@ The receiver object is expected to have a receive method that takes a message as
 Call <tt>fetch</tt> to download messages and process them.
 
   @fetcher.fetch
+
+or
+
+  @fetcher.fetch do |message|
+    ...
+  end
   
 == Configuration
 
