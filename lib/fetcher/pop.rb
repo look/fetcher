@@ -26,7 +26,7 @@ module Fetcher
       unless @connection.mails.empty?
         @connection.each_mail do |msg|
           begin
-            process_message(msg)
+            process_message(msg.pop)
           rescue
             handle_bogus_message(msg)
           end
