@@ -1,5 +1,9 @@
+require 'logger'
+
 module Fetcher
   class Base
+    attr_reader :connection
+
     # Options:
     # * <tt>:server</tt> - Server to connect to.
     # * <tt>:username</tt> - Username to use when connecting to server.
@@ -23,6 +27,7 @@ module Fetcher
         end
           
         instance_eval("@#{opt} = options[:#{opt}]")
+        @logger = create_logger(options[:logger])
       end
     end
     
@@ -59,5 +64,27 @@ module Fetcher
     def handle_bogus_message(message) #:nodoc:
       raise NotImplementedError, "This method should be overridden by subclass"
     end
+
+    def handle_exception(ex)
+      log "Fetcher: Exception: #{ex.message}"
+      log ex.backtrace.join("\n")
+    end
+
+    def log(msg)
+      @logger.info(msg) 
+    end
+
+    def create_logger(provided_logger)
+      @logger = provided_logger || rails_logger || default_logger
+    end
+
+    def rails_logger
+      defined?(Rails) && Rails.logger
+    end
+
+    def default_logger
+      ::Logger.new(STDERR)
+    end
+
   end
 end

@@ -2,7 +2,6 @@ require File.dirname(__FILE__) + '/../vendor/secure_pop'
 
 module Fetcher
   class Pop < Base
-
     protected
     
     # Additional Options:
@@ -16,18 +15,19 @@ module Fetcher
     
     # Open connection and login to server
     def establish_connection
-      @connection = Net::POP3.new(@server, @port)
-      @connection.enable_ssl(OpenSSL::SSL::VERIFY_NONE) if @ssl
-      @connection.start(@username, @password)
+      connection = Net::POP3.new(@server, @port)
+      connection.enable_ssl(OpenSSL::SSL::VERIFY_NONE) if @ssl
+      connection.start(@username, @password)
     end
     
     # Retrieve messages from server
     def get_messages
-      unless @connection.mails.empty?
-        @connection.each_mail do |msg|
+      unless connection.mails.empty?
+        connection.each_mail do |msg|
           begin
             process_message(msg.pop)
-          rescue
+          rescue Exception => ex
+            handle_exception(ex)
             handle_bogus_message(msg.pop)
           end
           # Delete message from server
@@ -40,10 +40,10 @@ module Fetcher
     def handle_bogus_message(message)
       # This needs a good solution
     end
-    
+
     # Close connection to server
     def close_connection
-      @connection.finish
+      connection.finish
     end
     
   end
