@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
-require File.dirname(__FILE__) + '/../config/environment.rb'
+require "#{Rails.root}/config/environment.rb"
+require "#{Rails.root}/vendor/plugins/fetcher/generators/fetcher_daemon/templates/daemon.rb"
 
 class <%=class_name%>FetcherDaemon < Daemon::Base
   
