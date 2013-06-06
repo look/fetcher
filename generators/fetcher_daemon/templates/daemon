@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
-require File.dirname(__FILE__) + '/../config/environment.rb'
+require File.expand_path("../../config/environment", __FILE__)
+
+require File.expand_path("../../lib/daemon", __FILE__)
 
 class <%=class_name%>FetcherDaemon < Daemon::Base
   
