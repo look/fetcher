@@ -3,7 +3,7 @@
 require 'fileutils'
 
 module Daemon
-  WorkingDirectory = Rails.root
+  WorkingDirectory = File.join(File.dirname(__FILE__), '..')
 
   class Base
     def self.pid_fn
