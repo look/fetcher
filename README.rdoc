@@ -35,6 +35,12 @@ The receiver object is expected to have a receive method that takes a message as
 Call <tt>fetch</tt> to download messages and process them.
 
   @fetcher.fetch
+
+or
+
+  @fetcher.fetch do |message|
+    ...
+  end
   
 == Configuration
 
@@ -43,6 +49,7 @@ The following options can be passed to the <tt>Fetcher.create</tt> factory metho
 [<tt>type</tt>] POP or IMAP 
 [<tt>server</tt>] The IP address or domain name of the server 
 [<tt>port</tt>] The port to connect to (defaults to the standard port for the type of server) 
+[<tt>keep</tt>] Set to any value to dont delete messages after retriving
 [<tt>ssl</tt>] Set to any value to use SSL encryption 
 [<tt>username</tt>] The username used to connect to the server 
 [<tt>password</tt>] The password used to connect to the server

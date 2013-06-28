@@ -28,10 +28,10 @@ module Fetcher
           begin
             process_message(msg.pop)
           rescue
-            handle_bogus_message(msg.pop)
+            handle_bogus_message(msg)
           end
           # Delete message from server
-          msg.delete
+          msg.delete unless @keep
         end
       end
     end

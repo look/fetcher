@@ -5,6 +5,7 @@ module Fetcher
     # * <tt>:username</tt> - Username to use when connecting to server.
     # * <tt>:password</tt> - Password to use when connecting to server.
     # * <tt>:receiver</tt> - Receiver object to pass messages to. Assumes the
+    # * <tt>:keep</tt> - Do not remove messages from server
     # receiver object has a receive method that takes a message as it's argument
     #
     # Additional protocol-specific options implimented by sub-classes
@@ -16,7 +17,6 @@ module Fetcher
     #                     :receiver => IncomingMailHandler)
     def initialize(options={})
       %w(server username password receiver).each do |opt|
-        raise ArgumentError, "#{opt} is required" unless options[opt.to_sym]
         # convert receiver to a Class if it isn't already.
         if opt == "receiver" && options[:receiver].is_a?(String)
           options[:receiver] = Kernel.const_get(options[:receiver])
@@ -27,7 +27,8 @@ module Fetcher
     end
     
     # Run the fetching process
-    def fetch
+    def fetch &block
+      @receiver = block if block_given?
       establish_connection
       get_messages
       close_connection
@@ -52,7 +53,11 @@ module Fetcher
     
     # Send message to receiver object
     def process_message(message)
-      @receiver.receive(message)
+      if @receiver.is_a? Proc
+        @receiver.call message
+      else
+        @receiver.receive(message)
+      end
     end
     
     # Stub. Should be overridden by subclass.
