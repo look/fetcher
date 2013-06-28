@@ -38,6 +38,34 @@ class FetcherTest < Test::Unit::TestCase
   def test_should_require_receiver
     assert_raise(ArgumentError) { create_fetcher(:receiver => nil) }
   end
+
+  def test_should_handle_exception_if_receiver_raises_exception_during_receive
+    @imap_fetcher = Fetcher.create(:type => :imap, :server => 'test.host',
+                                   :username => 'name',
+                                   :password => 'password',
+                                   :receiver => @receiver)
+
+    # most of this stubbing/mocking is to prevent the fetcher from 
+    # actually connecting to a server.
+    @fake_message = stub('fake-message')
+    @stub_connection = stub_everything('fake-imap-connection', {
+      :uid_search => ['123'], 
+      :uid_fetch  => [stub('fake-message-piece', :attr => {"RFC822" => @fake_message})]
+    })
+    @imap_fetcher.stubs(:establish_connection).returns(true)
+    @imap_fetcher.stubs(:connection).returns(@stub_connection)
+
+    # The meat of this test
+    exception = RuntimeError.new("Explosion")
+    @receiver.expects(:receive).with(@fake_message).raises(exception)
+    
+    # we should handle the exception
+    @imap_fetcher.expects(:handle_exception).with(exception)
+
+    # but also ensure we handle the bogus message as well
+    @imap_fetcher.expects(:handle_bogus_message).with(@fake_message)
+    @imap_fetcher.fetch
+  end
   
   def create_fetcher(options={})
     @fetcher = Fetcher::Base.new({:server => 'test.host', :username => 'name', :password => 'password', :receiver => @receiver}.merge(options))
