@@ -31,7 +31,7 @@ module Fetcher
             handle_bogus_message(msg.pop)
           end
           # Delete message from server
-          msg.delete
+          msg.delete unless @keep
         end
       end
     end
